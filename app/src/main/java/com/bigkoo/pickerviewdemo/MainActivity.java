@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> clothes = new ArrayList<>();
     private ArrayList<String> computer = new ArrayList<>();
 
+    private OptionsPickerView pvYMD;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initOptionPicker();
         initCustomOptionPicker();
         initNoLinkOptionsPicker();
+        initYMD();
 
         Button btn_Time = (Button) findViewById(R.id.btn_Time);
         btn_Options = (Button) findViewById(R.id.btn_Options);
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button btn_no_linkage = (Button) findViewById(R.id.btn_no_linkage);
         Button btn_to_Fragment = (Button) findViewById(R.id.btn_fragment);
         Button btn_circle = (Button) findViewById(R.id.btn_circle);
+        Button btn_calendar = (Button) findViewById(R.id.btn_calendar);
 
 
         btn_Time.setOnClickListener(this);
@@ -85,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn_no_linkage.setOnClickListener(this);
         btn_to_Fragment.setOnClickListener(this);
         btn_circle.setOnClickListener(this);
+        btn_calendar.setOnClickListener(this);
 
         findViewById(R.id.btn_GotoJsonData).setOnClickListener(this);
         findViewById(R.id.btn_lunar).setOnClickListener(this);
@@ -113,6 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             pvCustomLunar.show();
         } else if (v.getId() == R.id.btn_circle) {
             startActivity(new Intent(MainActivity.this, TestCircleWheelViewActivity.class));
+        } else if (v.getId() == R.id.btn_calendar) {
+            pvYMD.show();
         }
     }
 
@@ -442,6 +450,133 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void initYMD() {
+        //从2000年1月10日，到2021年11月10日
+        int startYear = 2000;
+        int startMonth = 1;
+        int startDay = 10;
+        int endYear = 2022;
+        int endMonth = 11;
+        int endDay = 10;
+        ArrayList<Integer> yearList = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> monthList = new ArrayList<>();
+        ArrayList<ArrayList<ArrayList<Integer>>> dayList = new ArrayList<>();
+        HashMap<Integer, Integer> leapYearMap = new HashMap<>();
+        HashMap<Integer, Integer> notLeapYearMap = new HashMap<>();
+        leapYearMap.put(1, 31);
+        leapYearMap.put(2, 29);
+        leapYearMap.put(3, 31);
+        leapYearMap.put(4, 30);
+        leapYearMap.put(5, 31);
+        leapYearMap.put(6, 30);
+        leapYearMap.put(7, 31);
+        leapYearMap.put(8, 31);
+        leapYearMap.put(9, 30);
+        leapYearMap.put(10, 31);
+        leapYearMap.put(11, 30);
+        leapYearMap.put(12, 31);
+        notLeapYearMap.put(1, 31);
+        notLeapYearMap.put(2, 28);
+        notLeapYearMap.put(3, 31);
+        notLeapYearMap.put(4, 30);
+        notLeapYearMap.put(5, 31);
+        notLeapYearMap.put(6, 30);
+        notLeapYearMap.put(7, 31);
+        notLeapYearMap.put(8, 31);
+        notLeapYearMap.put(9, 30);
+        notLeapYearMap.put(10, 31);
+        notLeapYearMap.put(11, 30);
+        notLeapYearMap.put(12, 31);
+        for (int i = startYear; i <= endYear; i++) {
+            yearList.add(i);
+            ArrayList<Integer> oneMonthList = new ArrayList<>();
+            if (i == startYear) {
+                ArrayList<ArrayList<Integer>> dayInAYearList = new ArrayList<>();
+                for (int j = startMonth; j <= 12; j++) {
+                    oneMonthList.add(j);
+                    ArrayList<Integer> oneDayList = new ArrayList<>();
+                    int allDayInOneMonth;
+                    if (isLeapYear(i)) {
+                        allDayInOneMonth = leapYearMap.get(j);
+                    } else {
+                        allDayInOneMonth = notLeapYearMap.get(j);
+                    }
+                    int start;
+                    if (j == startMonth) {
+                        start = startDay;
+                    } else {
+                        start = 1;
+                    }
+                    for (int k = start; k <= allDayInOneMonth; k++) {
+                        oneDayList.add(k);
+                    }
+                    dayInAYearList.add(oneDayList);
+                }
+                dayList.add(dayInAYearList);
+            } else if (i == endYear) {
+                ArrayList<ArrayList<Integer>> dayInAYearList = new ArrayList<>();
+                for (int j = 1; j <= endMonth; j++) {
+                    oneMonthList.add(j);
+                    ArrayList<Integer> oneDayList = new ArrayList<>();
+                    int allDayInOneMonth;
+                    if (isLeapYear(i)) {
+                        allDayInOneMonth = leapYearMap.get(j);
+                    } else {
+                        allDayInOneMonth = notLeapYearMap.get(j);
+                    }
+                    if (j == endMonth) {
+                        allDayInOneMonth = endDay;
+                    }
+                    for (int k = 1; k <= allDayInOneMonth; k++) {
+                        oneDayList.add(k);
+                    }
+                    dayInAYearList.add(oneDayList);
+                }
+                dayList.add(dayInAYearList);
+            } else {
+                ArrayList<ArrayList<Integer>> dayInAYearList = new ArrayList<>();
+                for (int j = 1; j <= 12; j++) {
+                    oneMonthList.add(j);
+                    ArrayList<Integer> oneDayList = new ArrayList<>();
+                    int allDayInOneMonth;
+                    if (isLeapYear(i)) {
+                        allDayInOneMonth = leapYearMap.get(j);
+                    } else {
+                        allDayInOneMonth = notLeapYearMap.get(j);
+                    }
+                    for (int k = 1; k <= allDayInOneMonth; k++) {
+                        oneDayList.add(k);
+                    }
+                    dayInAYearList.add(oneDayList);
+                }
+                dayList.add(dayInAYearList);
+            }
+            monthList.add(oneMonthList);
+        }
+
+        pvYMD = new OptionsPickerBuilder(this, new OnOptionsSelectListener() {
+
+            @Override
+            public void onOptionsSelect(int options1, int options2, int options3, View v) {
+                Log.d("solarex", options1 + "," + options2 + "," + options3);
+            }
+        }).setLayoutRes(R.layout.picker_year_month_day, new CustomListener() {
+            @Override
+            public void customLayout(View v) {
+                //
+            }
+        }).setCyclic(false, false, false).build();
+        pvYMD.setPicker(yearList, monthList, dayList);
+        int yearSelection = yearList.indexOf(2021);
+        int monthSelection = monthList.get(yearSelection).indexOf(11);
+        int daySelection = dayList.get(yearSelection).get(monthSelection).indexOf(15);
+        pvYMD.setSelectOptions(yearSelection, monthSelection, daySelection);
+    }
+
+    private boolean isLeapYear(int year) {
+        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
+    }
+
     private String getTime(Date date) {//可根据需要自行截取数据显示
         Log.d("getTime()", "choice date millis: " + date.getTime());
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -508,5 +643,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         computer.add("Apple");
         computer.add("HP");
     }
+
 
 }
